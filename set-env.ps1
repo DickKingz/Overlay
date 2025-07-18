@@ -1,0 +1,5 @@
+# Set environment variables for Tauri signing
+$env:TAURI_SIGNING_PRIVATE_KEY = "dW50cnVzdGVkIGNvbW1lbnQ6IHJzaWduIGVuY3J5cHRlZCBzZWNyZXQga2V5ClJXUlRZMEl5R0RJTlZxNWpUYlZUZ1pZM3hHSElSS2tYMWlsSDg1VnAxQmR1MVo5bnBHUUFBQkFBQUFBQUFBQUFBQUlBQUFBQWJ4QUx3OFRKYjl6RFFjUmVNbnF2ZGEwSEtIeGUySHcxWVZEWStkcUJESGNNbDM1MlZXZlAraFljWGs0Yy9YYnFQV2pYY1d0M0V4SmxWQnR2Njh0ZDJ2Wlc1Z1lPd3I2d21IeUEvOVdUSjdtS2ZLQ3BtT1c3dFoxQW5kemVWQU16OTYrVHczbCtZdmc9Cg=="
+
+Write-Host "Environment variables set successfully!"
+Write-Host "You can now run the signing command." 

@@ -1,0 +1,11 @@
+{
+  "version": "0.3.0",
+  "notes": "Auto-update functionality added! Click the 🔄 button to check for updates.",
+  "pub_date": "2024-07-15T06:00:00Z",
+  "platforms": {
+    "windows-x86_64": {
+      "url": "https://github.com/DickKingz/Overlay/releases/download/v0.3.0/Illuvium-Guide-Overlay_0.3.0_x64-setup.exe",
+      "signature": "PLACEHOLDER_SIGNATURE_WILL_BE_GENERATED_WHEN_BUILDING"
+    }
+  }
+} 
