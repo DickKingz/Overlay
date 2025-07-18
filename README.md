@@ -1,15 +1,17 @@
-# Illuvium Guide Overlay
+# DataKingz Illuvium Meta Guide
 
-A transparent overlay application for Illuvium that displays meta builds and community compositions to help players choose optimal strategies in-game.
+A professional desktop overlay application for Illuvium Arena Gauntlet that displays recent winning builds from top players, helping you stay competitive with real-time meta data.
 
 ## Features
 
-- 🎮 **Transparent Overlay**: Discord-style overlay that appears on top of the game
-- 🔥 **Meta Builds**: Shows top-performing builds from the community
+- 🎮 **Desktop Overlay**: Always-on-top transparent overlay for in-game reference
+- 🏆 **Recent Winning Builds**: Shows actual winning compositions from top 5 players
+- 🔗 **Bonding Information**: Displays which Illuvials are bonded to the Ranger
+- 🎯 **Player Filtering**: Filter builds by specific players or view all
 - ⚡ **Global Hotkey**: Press `Ctrl+Shift+G` to toggle the overlay
-- 🎯 **Build Selection**: Click on builds to highlight and study them
-- 🌐 **API Integration**: Fetches real-time data from Illuvium's API
-- 📱 **Responsive Design**: Works on different screen sizes
+- 🔄 **Daily Updates**: Automated data fetching with Windows Task Scheduler
+- 📱 **Responsive Design**: Scales text and images for accessibility
+- 🎨 **Modern UI**: Clean, professional interface with DataKingz branding
 
 ## Installation
 
@@ -17,97 +19,113 @@ A transparent overlay application for Illuvium that displays meta builds and com
 
 1. **Rust** - Install from [rustup.rs](https://rustup.rs/)
 2. **Node.js** - Install from [nodejs.org](https://nodejs.org/)
+3. **Python 3.8+** - For data fetching automation
 
-### Setup
+### Quick Setup
 
-1. Clone or download this repository
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/DickKingz/Overlay.git
+   cd Overlay
+   ```
+
 2. Install dependencies:
    ```bash
    npm install
    ```
 
-3. Install Rust dependencies:
+3. Build the application:
    ```bash
-   cd src-tauri
-   cargo build
+   npm run tauri build
    ```
+
+4. Run the application:
+   ```bash
+   .\src-tauri\target\release\guideoverlay.exe
+   ```
+
+## Configuration
+
+### API Setup
+
+1. Create a `.env` file in the root directory
+2. Add your Illuvium API token:
+   ```
+   ILLUVIUM_API_TOKEN=your_token_here
+   ```
+
+### Daily Automation Setup
+
+Run the automation setup script to configure daily data updates:
+
+```bash
+.\setup_automation.bat
+```
+
+This creates a Windows Task Scheduler job that runs daily at 2 AM.
 
 ## Usage
 
-### Development Mode
-
-```bash
-npm run tauri dev
-```
-
-This will start the application in development mode with hot reloading.
-
-### Production Build
-
-```bash
-npm run tauri build
-```
-
-This creates a production build in the `src-tauri/target/release/` directory.
-
 ### Using the Overlay
 
-1. **Start the application** - The overlay will appear as a transparent window
+1. **Start the application** - The overlay appears as a transparent window
 2. **Position the overlay** - Drag it to your preferred location on screen
-3. **Configure API access** - Click the settings button and enter your Illuvium API key
-4. **Load builds** - Click "Refresh" to fetch latest meta builds or "Demo" to see sample data
-5. **Toggle overlay** - Press `Ctrl+Shift+G` to show/hide the overlay
-6. **Select builds** - Click on any build card to highlight it for reference
+3. **Access settings** - Click the settings button to configure transparency and scaling
+4. **View builds** - Browse recent winning builds from top players
+5. **Filter by player** - Click on player cards to see their specific builds
+6. **Toggle overlay** - Press `Ctrl+Shift+G` to show/hide the overlay
 
-## API Configuration
+### Settings
 
-To access real-time build data, you'll need an Illuvium API key:
+- **Transparency**: Adjust overlay transparency (0-100%)
+- **Text Size**: Scale text for better readability
+- **Image Size**: Scale Illuvial and equipment images
+- **About**: View app information and version
 
-1. Visit the [Illuvium Developer Portal](https://developer.illuvium.io) (if available)
-2. Create an account and generate an API key
-3. Click the settings button in the overlay
-4. Enter your API key and save
+## Data Sources
 
-## Overlay Controls
-
-- **Settings** ⚙️ - Configure API key
-- **Demo** 📋 - Load sample build data
-- **Refresh** 🔄 - Fetch latest builds from API
-- **Hide** 👁️ - Hide the overlay (or use `Ctrl+Shift+G`)
-
-## Build Information
-
-Each build card shows:
-- **Player Name** - The player who used this build
-- **Win Rate** - Success rate percentage
-- **Composition** - List of Illuvials in the build
-- **Synergies** - Detected synergy types
-- **Rank & Games** - Player rank and number of games played
+- **Illuvium Analytics API**: Real-time leaderboard and match data
+- **Python Automation**: Daily data fetching with 7-day match search window
+- **Fallback Data**: Mock data when API is unavailable
 
 ## Technical Details
 
-- Built with [Tauri](https://tauri.app/) + React + TypeScript
-- Uses Illuvium's official API for game data
-- Supports Windows, macOS, and Linux
-- Minimal system resources usage
-- Always-on-top overlay functionality
+- **Frontend**: React + TypeScript + Vite
+- **Backend**: Tauri (Rust) for desktop integration
+- **Data Fetching**: Python script with reqwest HTTP client
+- **Automation**: Windows Task Scheduler + PowerShell scripts
+- **Platform**: Windows (with potential for macOS/Linux)
+
+## File Structure
+
+```
+guideoverlay/
+├── src/                    # React frontend
+│   ├── components/         # React components
+│   ├── data/              # API modules and data
+│   └── App.tsx            # Main application
+├── src-tauri/             # Tauri backend
+│   ├── src/               # Rust source code
+│   └── Cargo.toml         # Rust dependencies
+├── illuvium_data_fetcher.py  # Python data fetcher
+├── setup_automation.bat   # Automation setup script
+└── README_AUTOMATION.md   # Detailed automation guide
+```
 
 ## Troubleshooting
 
-### Overlay not appearing
-- Check if the application is running in the system tray
-- Try pressing `Ctrl+Shift+G` to toggle visibility
-- Ensure the window isn't positioned off-screen
+### App won't quit properly
+- The app uses a force quit command to ensure all processes terminate
+- Check Task Manager if processes remain
 
-### API errors
-- Verify your API key is correct
-- Check your internet connection
-- Ensure the Illuvium API is accessible
+### No data showing
+- Verify your API token has proper permissions
+- Check the Python script output for errors
+- Ensure the JSON file is copied to the public directory
 
-### Performance issues
-- Close other overlay applications
-- Reduce the number of displayed builds
-- Check system resource usage
+### Scaling not working
+- Text and image scaling is applied via CSS variables
+- Check that the settings sliders are working properly
 
 ## Contributing
 
@@ -123,4 +141,4 @@ This project is licensed under the MIT License.
 
 ## Disclaimer
 
-This is an unofficial third-party application. It is not affiliated with or endorsed by Illuvium. Use at your own risk.
+This is an unofficial third-party application created by DataKingz. It is not affiliated with or endorsed by Illuvium. Use at your own risk.
