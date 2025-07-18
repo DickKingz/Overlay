@@ -141,6 +141,9 @@ function App() {
       if (illuvial && illuvial.combatAffinity) {
         const affinity = illuvial.combatAffinity;
         counts[affinity] = (counts[affinity] || 0) + 1;
+        console.log(`✅ ${illuvialName} -> ${affinity} affinity`);
+      } else {
+        console.log(`❌ No affinity found for ${illuvialName}`);
       }
     });
     return counts;
@@ -154,6 +157,9 @@ function App() {
       if (illuvial && illuvial.combatClass) {
         const combatClass = illuvial.combatClass;
         counts[combatClass] = (counts[combatClass] || 0) + 1;
+        console.log(`✅ ${illuvialName} -> ${combatClass} class`);
+      } else {
+        console.log(`❌ No class found for ${illuvialName}`);
       }
     });
     return counts;
@@ -331,6 +337,9 @@ function App() {
         
         // Debug: Test name matching with some sample names
         debugNameMatching(['Atlas', 'Rhamphy', 'Rypter', 'Dash', 'Archie', 'Vermillia', 'Scarabok']);
+        
+        // Debug: Test name matching with illuvials from the build data
+        debugNameMatching(['Goliant', 'Axodon', 'Fludd', 'Dualeph', 'Seeforus', 'Mah\'tu', 'Umbre', 'Artace', 'Squizz']);
       } catch (error) {
         console.error('❌ Failed to load illuvial data:', error);
       }
@@ -1699,8 +1708,18 @@ function App() {
                         </div>
                         <div className="placement-info">
                           <span className="placement-badge">🥇 {build.placement}st Place</span>
-                          {build.matchDate && (
-                            <span className="match-date">{build.matchDate}</span>
+                          {build.match_date && (
+                            <span className="match-date">
+                              {new Date(build.match_date).toLocaleDateString('en-US', {
+                                month: 'short',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                              })}
+                            </span>
+                          )}
+                          {build.game_id && build.game_id !== "" && (
+                            <span className="game-id">ID: {build.game_id}</span>
                           )}
                         </div>
                       </div>
@@ -1719,6 +1738,61 @@ function App() {
                             </div>
                           )}
                         </div>
+                        
+                        {/* Synergies Section - Show calculated synergy counts */}
+                        {build.illuvials && build.illuvials.length > 0 && (
+                          <div className="synergies-section">
+                            <div className="section-label">✨ Synergies:</div>
+                            <div className="synergies-grid">
+                              {(() => {
+                                const illuvialNames = build.illuvials.map((ill: any) => ill.name);
+                                const affinityCounts = getAffinityCounts(illuvialNames);
+                                const classCounts = getClassCounts(illuvialNames);
+                                const allSynergies = { ...affinityCounts, ...classCounts };
+                                
+                                // Debug logging
+                                console.log(`🔍 Synergies for ${build.player_name}:`, {
+                                  illuvialNames,
+                                  affinityCounts,
+                                  classCounts,
+                                  allSynergies
+                                });
+                                
+                                // Additional debugging for each illuvial
+                                illuvialNames.forEach((name: string) => {
+                                  const illuvial = getIlluvialByDisplayName(name);
+                                  if (illuvial) {
+                                    console.log(`✅ ${name} -> ${illuvial.combatAffinity} (${illuvial.combatClass})`);
+                                  } else {
+                                    console.log(`❌ ${name} -> No data found`);
+                                  }
+                                });
+                                
+                                return Object.entries(allSynergies)
+                                  .sort(([,a], [,b]) => b - a) // Sort by count descending
+                                  .map(([synergy, count]) => {
+                                    // Debug: Log each synergy being rendered
+                                    console.log(`🟢 Rendering synergy: ${synergy} (${count})`);
+                                    return (
+                                      <div key={synergy} className="synergy-badge">
+                                        <img
+                                          src={getSynergyImage(synergy)}
+                                          alt={synergy}
+                                          className="synergy-image"
+                                          onError={(e) => {
+                                            e.currentTarget.src = '/image.png';
+                                          }}
+                                          title={synergy}
+                                        />
+                                        <span className="synergy-name">{synergy}</span>
+                                        <span className="synergy-count">({count})</span>
+                                      </div>
+                                    );
+                                  });
+                              })()}
+                            </div>
+                          </div>
+                        )}
                         
                         {/* Illuvials Section with Individual Cards */}
                         {build.illuvials.length > 0 && (
@@ -1755,11 +1829,20 @@ function App() {
                                     {illuvialAugments && illuvialAugments.length > 0 && (
                                       <div className="illuvial-augments">
                                         <span className="augments-label">Augments:</span>
-                                        <div className="augments-list">
+                                        <div className="augments-grid">
                                           {illuvialAugments.map((augment: string, augmentIndex: number) => (
-                                            <span key={augmentIndex} className="augment-item">
-                                              {augment}
-                                            </span>
+                                            <div key={augmentIndex} className="augment-item">
+                                              <img
+                                                src={getAugmentImage(augment)}
+                                                alt={augment}
+                                                className="augment-image"
+                                                onError={(e) => {
+                                                  e.currentTarget.src = '/image.png';
+                                                }}
+                                                title={augment}
+                                              />
+                                              <span className="augment-name">{augment}</span>
+                                            </div>
                                           ))}
                                         </div>
                                       </div>

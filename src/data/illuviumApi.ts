@@ -46,8 +46,8 @@ export async function createCustomLobby(request: LobbyCreateRequest): Promise<st
     return data.inviteCode;
   } catch (error) {
     console.error('Error creating lobby:', error);
-    // Fallback: generate a mock lobby code for testing
-    return 'MOCK' + Math.random().toString(36).substr(2, 4).toUpperCase();
+    // No fallback - return empty string
+    return '';
   }
 }
 

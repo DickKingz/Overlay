@@ -55,6 +55,7 @@ class WinningBuild:
     weapon: str
     match_date: str
     mode: str
+    game_id: str = ""
 
 def fetch_leaderboard() -> List[LeaderboardPlayer]:
     """Fetch top 5 players from public leaderboard endpoint"""
@@ -76,10 +77,10 @@ def fetch_leaderboard() -> List[LeaderboardPlayer]:
             return players
         else:
             print(f"❌ Leaderboard API failed: {response.status_code} - {response.text}")
-            return get_mock_leaderboard()
+            return []
     except Exception as e:
         print(f"❌ Error fetching leaderboard: {e}")
-        return get_mock_leaderboard()
+        return []
 
 def search_player_matches(player_name: str, days_back: int = 7) -> List[Dict[str, Any]]:
     """Search for player's recent matches using the confirmed API format"""
@@ -172,7 +173,18 @@ def extract_builds_from_matches(matches: List[Dict[str, Any]], player_name: str,
             # Extract Illuvials and their augments from the last round
             illuvials = []
             
-            for illuvial in player_matchup.get('illuvials', []):
+            # Get only the winning player's Illuvials
+            player_illuvials = player_matchup.get('illuvials', [])
+            
+            # Validate Illuvial count (should be 7-10 for winning teams)
+            if len(player_illuvials) > 10:
+                print(f"⚠️ Warning: {player_name} has {len(player_illuvials)} Illuvials (expected 7-10)")
+                # Take only the first 10 to avoid invalid builds
+                player_illuvials = player_illuvials[:10]
+            elif len(player_illuvials) < 7:
+                print(f"⚠️ Warning: {player_name} has {len(player_illuvials)} Illuvials (expected 7-10)")
+            
+            for illuvial in player_illuvials:
                 if not isinstance(illuvial, dict):
                     continue
                     
@@ -197,6 +209,22 @@ def extract_builds_from_matches(matches: List[Dict[str, Any]], player_name: str,
             suit = player_matchup.get('suit', 'Unknown')
             weapon = player_matchup.get('weapon', 'Unknown')
             
+            # Extract game ID and format date
+            game_id = game.get('gameId', game.get('id', ''))
+            match_date = game.get('startTime', '')
+            
+            # Format date if it exists
+            if match_date:
+                try:
+                    # Parse ISO date and format it nicely
+                    from datetime import datetime
+                    parsed_date = datetime.fromisoformat(match_date.replace('Z', '+00:00'))
+                    formatted_date = parsed_date.strftime('%Y-%m-%d %H:%M UTC')
+                except:
+                    formatted_date = match_date
+            else:
+                formatted_date = 'Unknown'
+            
             build = WinningBuild(
                 player_name=player_name,
                 player_rank=player_rank,
@@ -204,8 +232,9 @@ def extract_builds_from_matches(matches: List[Dict[str, Any]], player_name: str,
                 illuvials=illuvials,
                 suit=suit,
                 weapon=weapon,
-                match_date=game.get('startTime'),
-                mode=game.get('mode')
+                match_date=formatted_date,
+                mode=game.get('mode'),
+                game_id=game_id
             )
             
             builds.append(build)
@@ -217,65 +246,7 @@ def extract_builds_from_matches(matches: List[Dict[str, Any]], player_name: str,
     
     return builds
 
-def get_mock_leaderboard() -> List[LeaderboardPlayer]:
-    """Return mock leaderboard data for testing"""
-    return [
-        LeaderboardPlayer(username="FoxspiritlAtlas", rank=1, profile_url="https://illuvilytics.web.app/profile/FoxspiritlAtlas")
-    ]
 
-def get_mock_builds(player_name: str, player_rank: int) -> List[WinningBuild]:
-    """Return mock build data for testing"""
-    mock_illuvials = [
-        [
-            Illuvial("Archie", True, ["Apex Supercharger", "Arcane Accelerator"]),
-            Illuvial("Archos", True, ["Plasma Catalyst", "Power Diverter"]),
-            Illuvial("Archaleon", False, ["Fury Heart", "Chronoflux"]),
-            Illuvial("Atlas", False, ["Eldersurge", "Empyrean Core"]),
-            Illuvial("Malura", False, ["Flow Equalizer", "Adaptive Carapace"]),
-            Illuvial("Adorius", False, ["Guardian's Grid", "Psion Imprint"]),
-            Illuvial("Gnarl", False, ["Arcane Accelerator"])
-        ],
-        [
-            Illuvial("Sear", True, ["Fury Heart", "Chronoflux"]),
-            Illuvial("Phorus", True, ["Fatesealer", "Eldersurge"]),
-            Illuvial("Blazenite", False, ["Empyrean Core", "Flow Equalizer"]),
-            Illuvial("Jotun", False, ["Adaptive Carapace", "Guardian's Grid"]),
-            Illuvial("Slashin", False, ["Psion Imprint", "Arcane Accelerator"]),
-            Illuvial("Blotto", False, ["Power Diverter", "Plasma Catalyst"]),
-            Illuvial("Chukoondi", False, ["Fury Heart"]),
-            Illuvial("Kukkaraph", False, ["Chronoflux"])
-        ],
-        [
-            Illuvial("Verminio", True, ["Eldersurge", "Empyrean Core"]),
-            Illuvial("Vermilliare", True, ["Flow Equalizer", "Adaptive Carapace"]),
-            Illuvial("Squizz", False, ["Guardian's Grid", "Psion Imprint"]),
-            Illuvial("Revo", False, ["Arcane Accelerator", "Power Diverter"]),
-            Illuvial("Gyro", False, ["Plasma Catalyst", "Fury Heart"]),
-            Illuvial("VolanteNature", False, ["Chronoflux", "Fatesealer"]),
-            Illuvial("Rai", False, ["Eldersurge"]),
-            Illuvial("Railu", False, ["Empyrean Core"]),
-            Illuvial("Rai-lu", False, ["Flow Equalizer"])
-        ]
-    ]
-    
-    mock_suits = ["Adamantine Shield", "Beetles Paradox", "Celestial Infusion"]
-    mock_weapons = ["Emberling Rod", "Galewind Bow", "rove Sword"]
-    
-    builds = []
-    for i in range(3):
-        build = WinningBuild(
-            player_name=player_name,
-            player_rank=player_rank,
-            placement=1,
-            illuvials=mock_illuvials[i],
-            suit=mock_suits[i],
-            weapon=mock_weapons[i],
-            match_date=datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
-            mode="Ranked"
-        )
-        builds.append(build)
-    
-    return builds
 
 def main():
     """Function to fetch and process data"""
@@ -313,10 +284,8 @@ def main():
                 all_builds.extend(builds)
                 logger.info(f"✅ Extracted {len(builds)} winning builds for {player.username}")
             else:
-                # Use mock data if no matches found
-                logger.warning(f"⚠️ No matches found for {player.username}, using mock data")
-                mock_builds = get_mock_builds(player.username, player.rank)
-                all_builds.extend(mock_builds)
+                # No matches found - skip this player
+                logger.warning(f"⚠️ No matches found for {player.username}, skipping")
             
             # Add delay between requests
             time.sleep(1)
@@ -341,6 +310,7 @@ def main():
                 for ill in build.illuvials
             ]
             build_dict["bonded_illuvials"] = [ill.name for ill in build.illuvials if ill.is_bonded]
+            build_dict["game_id"] = build.game_id
             output_data["builds"].append(build_dict)
         
         # Save to JSON file

@@ -191,7 +191,7 @@ export const debugNameMatching = (testNames: string[]): void => {
   testNames.forEach(name => {
     const result = getIlluvialByDisplayName(name);
     if (result) {
-      console.log(`✅ "${name}" -> ${result.displayName} (${result.line} Stage ${result.stage})`);
+      console.log(`✅ "${name}" -> ${result.displayName} (${result.line} Stage ${result.stage}) - Affinity: ${result.combatAffinity}, Class: ${result.combatClass}`);
     } else {
       console.log(`❌ "${name}" -> No match found`);
     }

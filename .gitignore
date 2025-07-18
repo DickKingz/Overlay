@@ -62,3 +62,6 @@ debug_*.json
 dist/
 src-tauri/target/
 src-tauri/Cargo.lock
+
+# Generated files
+builds_data_access.html

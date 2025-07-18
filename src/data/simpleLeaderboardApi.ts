@@ -62,67 +62,7 @@ const ALTERNATIVE_ENDPOINTS = {
   ]
 };
 
-// More realistic mock data based on actual Illuvium game data
-const MOCK_LEADERBOARD_PLAYERS: LeaderboardPlayer[] = [
-  { username: 'MetaMaster_Pro', profileUrl: `${PLAYER_ANALYTICS_API}/MetaMaster_Pro/analytics`, rank: 1, rating: 2450, totalGames: 156 },
-  { username: 'BuildCraft_Elite', profileUrl: `${PLAYER_ANALYTICS_API}/BuildCraft_Elite/analytics`, rank: 2, rating: 2380, totalGames: 142 },
-  { username: 'StrategyKing_GG', profileUrl: `${PLAYER_ANALYTICS_API}/StrategyKing_GG/analytics`, rank: 3, rating: 2320, totalGames: 128 },
-  { username: 'CompositionWizard', profileUrl: `${PLAYER_ANALYTICS_API}/CompositionWizard/analytics`, rank: 4, rating: 2280, totalGames: 134 },
-  { username: 'TopTierPlayer', profileUrl: `${PLAYER_ANALYTICS_API}/TopTierPlayer/analytics`, rank: 5, rating: 2250, totalGames: 118 }
-];
 
-const MOCK_WINNING_BUILDS: WinningBuild[] = [
-  {
-    placement: 1,
-    illuvials: ['Axodon', 'Rhamphyre', 'Ryplance', 'Umbre'],
-    augments: 'Apex Supercharger, Fury Heart, Adaptive Reflection',
-    suit: 'Adamantine Shield',
-    weapon: 'Aqua Blaster',
-    matchDate: '2024-01-15',
-    playerUsername: 'MetaMaster_Pro',
-    playerRank: 1
-  },
-  {
-    placement: 1,
-    illuvials: ['Titanor', 'Kukkaraph', 'Adorius', 'Sear'],
-    augments: 'Arcane Accelerator, Primeval Force, Guardians Grid',
-    suit: 'Celestial Infusion',
-    weapon: 'Chronoflux Cannon',
-    matchDate: '2024-01-14',
-    playerUsername: 'BuildCraft_Elite',
-    playerRank: 2
-  },
-  {
-    placement: 1,
-    illuvials: ['Dualeph', 'Blazenite', 'Malura', 'Phyriox'],
-    augments: 'Plasma Catalyst, Power Diverter, Lifewell',
-    suit: 'Beetle\'s Paradox',
-    weapon: 'Fatesealer Bow',
-    matchDate: '2024-01-13',
-    playerUsername: 'StrategyKing_GG',
-    playerRank: 3
-  },
-  {
-    placement: 2,
-    illuvials: ['Archeleon', 'Vermilliare', 'Scarabok', 'Kukkulus'],
-    augments: 'Eldersurge, Empyrean Core, Flow Equalizer',
-    suit: 'Guardians Grid',
-    weapon: 'Primeval Force',
-    matchDate: '2024-01-12',
-    playerUsername: 'CompositionWizard',
-    playerRank: 4
-  },
-  {
-    placement: 2,
-    illuvials: ['Adoredo', 'Singe', 'Synalph', 'Fernite'],
-    augments: 'Mendoskeleton, Ion Shroud, Goliath Force',
-    suit: 'Lifewell',
-    weapon: 'Power Diverter',
-    matchDate: '2024-01-11',
-    playerUsername: 'TopTierPlayer',
-    playerRank: 5
-  }
-];
 
 // Utility functions
 function getCachedData<T>(key: string): T | null {
@@ -466,10 +406,10 @@ export async function fetchLeaderboard(): Promise<LeaderboardPlayer[]> {
     console.warn('Failed to fetch real leaderboard data:', error);
   }
 
-  // Fallback to mock data
-  console.log('🔄 Using mock leaderboard data');
-  setCachedData(LEADERBOARD_CACHE_KEY, MOCK_LEADERBOARD_PLAYERS);
-  return MOCK_LEADERBOARD_PLAYERS;
+  // Return empty array instead of mock data
+  console.log('🔄 Returning empty leaderboard data');
+  setCachedData(LEADERBOARD_CACHE_KEY, []);
+  return [];
 }
 
 /**
@@ -511,16 +451,12 @@ export async function fetchPlayerWinningBuilds(player: LeaderboardPlayer): Promi
     console.warn(`Failed to fetch real builds for ${player.username}:`, error);
   }
 
-  // Fallback to mock data
-  console.log(`🔄 Using mock builds for ${player.username}`);
-  const mockBuilds = MOCK_WINNING_BUILDS.map(build => ({
-    ...build,
-    playerUsername: player.username,
-    playerRank: player.rank
-  }));
+  // Return empty array instead of mock data
+  console.log(`🔄 Returning empty builds for ${player.username}`);
+  const emptyBuilds: WinningBuild[] = [];
   
-  setCachedData(cacheKey, mockBuilds);
-  return mockBuilds;
+  setCachedData(cacheKey, emptyBuilds);
+  return emptyBuilds;
 }
 
 /**

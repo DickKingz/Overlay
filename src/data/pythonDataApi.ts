@@ -22,6 +22,7 @@ interface PythonBuildData {
     weapon: string;
     match_date: string;
     mode: string;
+    game_id: string;
   }>;
 }
 
@@ -60,16 +61,10 @@ async function loadPythonData(): Promise<PythonBuildData> {
   } catch (error) {
     console.error('❌ Failed to load Python data:', error);
     
-    // Return mock data as fallback
+    // Return empty data instead of mock data
     return {
       timestamp: new Date().toISOString(),
-      players: [
-        { username: 'FoxspiritlAtlas', rank: 1, profile_url: 'https://illuvilytics.web.app/profile/FoxspiritlAtlas' },
-        { username: 'Web3GamingHYPE', rank: 2, profile_url: 'https://illuvilytics.web.app/profile/Web3GamingHYPE' },
-        { username: 'SteigenHYPE', rank: 3, profile_url: 'https://illuvilytics.web.app/profile/SteigenHYPE' },
-        { username: 'FuryzHYPE', rank: 4, profile_url: 'https://illuvilytics.web.app/profile/FuryzHYPE' },
-        { username: 'OLA.Nareba', rank: 5, profile_url: 'https://illuvilytics.web.app/profile/OLA.Nareba' }
-      ],
+      players: [],
       builds: []
     };
   }

@@ -140,13 +140,31 @@ button {
   padding: 20px;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   color: white;
-  height: 100vh;
-  width: 100vw;
+  min-height: 400px;
+  min-width: 600px;
+  max-height: 90vh;
+  max-width: 90vw;
   overflow-y: auto;
+  overflow-x: auto;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
   box-sizing: border-box;
   position: relative;
   font-size: calc(16px * var(--text-scale, 1));
+  resize: both;
+}
+
+/* Resize handle styling */
+.overlay-container::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 15px;
+  height: 15px;
+  background: linear-gradient(-45deg, transparent 30%, rgba(255, 255, 255, 0.3) 30%, rgba(255, 255, 255, 0.3) 40%, transparent 40%, transparent 60%, rgba(255, 255, 255, 0.3) 60%, rgba(255, 255, 255, 0.3) 70%, transparent 70%);
+  cursor: se-resize;
+  pointer-events: none;
+  z-index: 1000;
 }
 
 /* Header */
@@ -866,6 +884,10 @@ button {
 @media (max-width: 480px) {
   .overlay-container {
     padding: 12px;
+    min-width: 320px;
+    min-height: 300px;
+    max-width: 95vw;
+    max-height: 95vh;
   }
   
   .overlay-header h2 {
@@ -2673,6 +2695,17 @@ button {
   white-space: nowrap;
 }
 
+.game-id {
+  font-size: 9px;
+  color: #888;
+  font-family: monospace;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 8px;
+  white-space: nowrap;
+}
+
 .build-content {
   display: flex;
   flex-direction: column;
@@ -2823,22 +2856,108 @@ button {
   max-width: 100%;
 }
 
-.recent-build-card .augments-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.125rem;
-  margin-top: 0.125rem;
+.recent-build-card .augments-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
+  gap: 4px;
+  margin-top: 4px;
 }
 
 .recent-build-card .augment-item {
-  font-size: calc(7px * var(--text-scale, 1));
-  color: #a78bfa;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   background: rgba(139, 92, 246, 0.1);
   border: 1px solid rgba(139, 92, 246, 0.3);
-  border-radius: 0.125rem;
-  padding: 0.0625rem 0.25rem;
+  border-radius: 6px;
+  padding: 4px;
+  transition: all 0.2s ease;
+}
+
+.recent-build-card .augment-item:hover {
+  background: rgba(139, 92, 246, 0.2);
+  border-color: rgba(139, 92, 246, 0.5);
+  transform: translateY(-1px);
+}
+
+.recent-build-card .augment-image {
+  width: calc(24px * var(--image-scale, 1));
+  height: calc(24px * var(--image-scale, 1));
+  object-fit: contain;
+  border-radius: 4px;
+  margin-bottom: 2px;
+}
+
+.recent-build-card .augment-name {
+  font-size: calc(7px * var(--text-scale, 1));
+  color: #a78bfa;
+  text-align: center;
+  line-height: 1.2;
+  word-break: break-word;
+  max-width: 100%;
+}
+
+.recent-build-card .synergies-section {
+  margin-top: 16px;
+}
+
+.recent-build-card .synergies-section .section-label {
+  color: #fbbf24;
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.recent-build-card .synergies-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.recent-build-card .synergy-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: 6px;
+  padding: 6px 8px;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(4px);
+}
+
+.recent-build-card .synergy-badge:hover {
+  background: rgba(59, 130, 246, 0.2);
+  border-color: rgba(59, 130, 246, 0.5);
+  transform: translateY(-1px);
+}
+
+.recent-build-card .synergy-image {
+  width: 20px;
+  height: 20px;
+  border-radius: 3px;
+  object-fit: cover;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+}
+
+.recent-build-card .synergy-name {
+  font-size: calc(11px * var(--text-scale, 1));
   font-weight: 500;
-  line-height: 1.1;
+  color: #ffffff;
+  white-space: nowrap;
+}
+
+.recent-build-card .synergy-count {
+  font-size: calc(10px * var(--text-scale, 1));
+  color: #60a5fa;
+  font-weight: 600;
+  background: rgba(59, 130, 246, 0.2);
+  padding: 1px 4px;
+  border-radius: 3px;
+  min-width: 16px;
   text-align: center;
 }
 
@@ -2873,6 +2992,41 @@ button {
   
   .recent-build-card .augments-text {
     font-size: calc(7px * var(--text-scale, 1));
+  }
+  
+  .recent-build-card .augments-grid {
+    grid-template-columns: repeat(auto-fit, minmax(32px, 1fr));
+    gap: 2px;
+  }
+  
+  .recent-build-card .augment-image {
+    width: calc(20px * var(--image-scale, 1));
+    height: calc(20px * var(--image-scale, 1));
+  }
+  
+  .recent-build-card .augment-name {
+    font-size: calc(6px * var(--text-scale, 1));
+  }
+  
+  .recent-build-card .synergies-grid {
+    gap: 4px;
+  }
+  
+  .recent-build-card .synergy-badge {
+    padding: 4px 6px;
+  }
+  
+  .recent-build-card .synergy-image {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .recent-build-card .synergy-name {
+    font-size: calc(9px * var(--text-scale, 1));
+  }
+  
+  .recent-build-card .synergy-count {
+    font-size: calc(8px * var(--text-scale, 1));
   }
 }
 

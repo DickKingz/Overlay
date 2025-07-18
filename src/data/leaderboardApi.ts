@@ -171,16 +171,8 @@ export async function fetchLeaderboard(): Promise<LeaderboardPlayer[]> {
       const isDevelopment = !isTauri;
       
       if (isDevelopment) {
-        console.log('🔄 Development mode detected, providing mock data...');
-        const mockPlayers: LeaderboardPlayer[] = [
-          { username: 'TopPlayer1', profileUrl: 'https://illuvilytics.web.app/profile/top1', rank: 1 },
-          { username: 'MetaMaster2', profileUrl: 'https://illuvilytics.web.app/profile/top2', rank: 2 },
-          { username: 'StrategyPro3', profileUrl: 'https://illuvilytics.web.app/profile/top3', rank: 3 },
-          { username: 'BuildExpert4', profileUrl: 'https://illuvilytics.web.app/profile/top4', rank: 4 },
-          { username: 'CompositionKing5', profileUrl: 'https://illuvilytics.web.app/profile/top5', rank: 5 }
-        ];
-        console.log('✅ Returning mock leaderboard data for development');
-        return mockPlayers;
+        console.log('🔄 Development mode detected, but no mock data provided');
+        throw new Error('Development mode: No mock data available');
       } else {
         alert(`Failed to load leaderboard: ${errorMessage}\n\nPlease check your internet connection and try again.`);
       }
@@ -465,31 +457,8 @@ export async function getWinningBuilds(profileUrl: string): Promise<WinningBuild
                    typeof (window as any).__TAURI__.invoke === 'function';
     const isDevelopment = !isTauri;
     if (isDevelopment) {
-      console.log('🔄 Development mode detected, providing mock winning builds...');
-      const mockBuilds: WinningBuild[] = [
-        {
-          placement: 1,
-          illuvials: ['Axolotl', 'Pterodactyl', 'SeaScorpion'],
-          augments: 'ApexSupercharger, ArcaneAccelerator',
-          suit: 'CelestialInfusion',
-          weapon: 'AquaBlaster_Amplifier',
-          matchDate: '2024-01-15',
-          playerUsername: 'TopPlayer1',
-          playerRank: 1
-        },
-        {
-          placement: 1,
-          illuvials: ['Thylacine', 'Turtle', 'AntEater'],
-          augments: 'PlasmaCatalyst, PowerDiverter',
-          suit: 'AdamantineShield',
-          weapon: 'Furyheart_Amplifier',
-          matchDate: '2024-01-14',
-          playerUsername: 'TopPlayer1',
-          playerRank: 1
-        }
-      ];
-      console.log('✅ Returning mock winning builds for development');
-      return mockBuilds;
+      console.log('🔄 Development mode detected, but no mock data provided');
+      return [];
     }
     
     // Don't show alert for profile fetching errors, just log and return empty
@@ -888,47 +857,14 @@ export async function updateRecentBuilds(): Promise<WinningBuild[]> {
       } catch (error) {
         console.error('❌ Failed to update recent builds:', error);
         
-        // Check if we're in development mode and provide mock data
+        // Check if we're in development mode
         const isTauri = typeof window !== 'undefined' && 
                        (window as any).__TAURI__ && 
                        typeof (window as any).__TAURI__.invoke === 'function';
         const isDevelopment = !isTauri;
         if (isDevelopment) {
-          console.log('🔄 Development mode detected, providing mock recent builds...');
-          const mockRecentBuilds: WinningBuild[] = [
-            {
-              placement: 1,
-              illuvials: ['Axolotl', 'Pterodactyl', 'SeaScorpion'],
-              augments: 'ApexSupercharger, ArcaneAccelerator',
-              suit: 'CelestialInfusion',
-              weapon: 'AquaBlaster_Amplifier',
-              matchDate: '2024-01-15',
-              playerUsername: 'TopPlayer1',
-              playerRank: 1
-            },
-            {
-              placement: 1,
-              illuvials: ['Thylacine', 'Turtle', 'AntEater'],
-              augments: 'PlasmaCatalyst, PowerDiverter',
-              suit: 'AdamantineShield',
-              weapon: 'Furyheart_Amplifier',
-              matchDate: '2024-01-14',
-              playerUsername: 'MetaMaster2',
-              playerRank: 2
-            },
-            {
-              placement: 1,
-              illuvials: ['Beetle', 'Dodo', 'Elk'],
-              augments: 'Eldersurge, EmpyreanCore',
-              suit: 'BeetlesParadox',
-              weapon: 'Chronoflux_Amplifier',
-              matchDate: '2024-01-13',
-              playerUsername: 'StrategyPro3',
-              playerRank: 3
-            }
-          ];
-          console.log('✅ Returning mock recent builds for development');
-          resolve(mockRecentBuilds);
+          console.log('🔄 Development mode detected, but no mock data provided');
+          resolve([]);
           return;
         }
         
